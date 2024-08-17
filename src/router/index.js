@@ -18,7 +18,8 @@ import deviceRouter from "@/router/modules/device";
 import uploadSImageRouter from '@/router/modules/uploadSImage'
 import samplePlotRouter from '@/router/modules/samplePlot'
 import flightPlaybackRouter from '@/router/modules/flightPlayback'
-import testRouter from '@/router/modules/test'
+import excelBatchUploadRouter from '@/router/modules/excelBatchUpload'
+import map2DRouter from "@/router/modules/map2D";
 
 export const constantRoutes = [    // 代表那些不需要动态判断权限的路由，如登录页、404、等通用页面
   {
@@ -170,7 +171,8 @@ export const asyncRoutes = [    //需求动态判断权限并通过 addRoutes �
   uploadSImageRouter,
   samplePlotRouter,
   flightPlaybackRouter,
-  testRouter,
+  excelBatchUploadRouter,
+  map2DRouter,
 
   // {
   //   path: '/example',

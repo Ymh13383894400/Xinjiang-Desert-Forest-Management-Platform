@@ -57,7 +57,8 @@ const actions = {
       let data = {
         roles: ['admin'],
         introduction: 'I am a super administrator',
-        avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+        //avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+        avatar: 'https://bpic.51yuansu.com/pic3/cover/04/05/53/6135f24f8de06_610.jpg',
         name: 'Super Admin'
       }
       if (!data) {

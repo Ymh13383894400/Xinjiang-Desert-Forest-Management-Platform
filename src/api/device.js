@@ -16,5 +16,13 @@ export function addUAV(data) {     // 获取所有以保存的无人机参数信
   })
 }
 
+export function deleteUAV(data) {     // 获取所有以保存的无人机参数信息
+  return request({
+    url: '/api/samplePlot/deleteUAV',
+    method: 'get',
+    params: {data}
+  })
+}
+
 
 

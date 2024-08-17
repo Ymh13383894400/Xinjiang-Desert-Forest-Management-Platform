@@ -1,7 +1,7 @@
 <template>
   <div style="width: 1483px;" v-if="stopSlideFlag">
     <el-checkbox v-model="showId" style="z-index: 289;background-color: grey;"><span
-      style="color:white;">显示编号</span></el-checkbox>
+      style="color:white;">显示名称</span></el-checkbox>
     <div style="height: 1380px;width: 1483px;" :style="imgStyle">
       <el-amap class="amap-box" :vid="'amap-vue'" :zoom="zoom" :center="center" :plugin="mapplugin">
         <el-amap-layer-satellite/> <!-- 高德地图的卫星图层组件，用于在地图上显示卫星影像 -->
@@ -9,12 +9,13 @@
         <!-- :path="amapPath"：绑定折线的路径数据，amapPath 是一个在 Vue 数据中定义的数组变量，包含了折线经过的坐标点。
              :strokeWeight="5"：设置折线的宽度为 5 像素。    :strokeColor="'blue'"：设置折线的颜色为蓝色。-->
         <div v-for="(icon, index) in observeList" @click="showDialog(icon.id)">
-          <el-amap-marker :position="[icon.long-0.0, icon.lat-0.0]" :extData="icon.id" style="background: none"
+          <el-amap-marker :position="[icon.long-0.0, icon.lat-0.0]" :extData="{id: icon.id, name :icon.samplePlotName}" style="background: none"
                           :events="markerEvents"></el-amap-marker> <!-- 在地图上显示一个标记点-->
 
-          <el-amap-text :visible="showId" :position="[icon.long-0.0, icon.lat-0.0]" :text="icon.id + '' " :domStyle="text_style"
+          <el-amap-text :visible="showId" :position="[icon.long-0.0, icon.lat-0.0]" :text="icon.samplePlotName + '' " :domStyle="text_style"
                         @click="showDialog(icon.id)" :events="textEvents" :extData="icon.id"/>
 <!--            text 显示标记点的名称,点击事件 showDialog(icon.id) -->
+<!--          <el-amap-->
         </div>
       </el-amap>
 
@@ -31,7 +32,7 @@
             下载样地图片
           </el-button>
 
-          <el-button type="primary" size="mini" style="float: right" @click="checkImg">
+          <el-button type="primary" size="mini" style="float: right" @click="checkMap">
             查看样地图片
           </el-button>
         </div>
@@ -279,11 +280,12 @@ export default {
       stopSlideFlag: true,
       markerEvents: {
         click(e) {
-          let id = e.target.w.extData
+          let id = e.target.w.extData.id
+          let name = e.target.w.extData.name
           id = parseInt(id)
-          console.log(e)
+
           //获取id的函数
-          self.getId(id)
+          self.getId(id,name)
           self.getTableData(id)
           self.dialogTableVisible = true
         }
@@ -292,7 +294,7 @@ export default {
         click(e) {
           let id = e.target.w.text     // 提取所点击标记点的id
           id = parseInt(id)
-          console.log(e)
+          // console.log(e)
           self.getTableData(id)    // 获取与点击的 id 相关的数据
           self.initChart(id)       // 根据点击的 id 初始化或更新图表
           self.dialogTableVisible = true
@@ -356,23 +358,22 @@ export default {
     this.getData()
   },
   methods: {
-    p(t){
-      console.log(t + " ***")
-    },
+
     getId(id) {
+      // console.log(id,name)
       this.ymh = id
+      this.ymhName = name
     },
     getData() {
       get_all_coords().then(response => {    // 获取坐标点
         this.observeList = response.coords
-        console.log(this.observeList)
+        // console.log(this.observeList[0]['samplePlotName'])
+        // console.log(this.observeList)
         // console.log(this.observeList[0].long, this.observeList[0].lat)
       })
     },
     showDialog(id) {
-      console.log("11111")
       this.getTableData(id)
-      console.log("222222")
       this.dialogTableVisible = true
     },
     getTableData(id) {
@@ -403,9 +404,8 @@ export default {
     },
     getSamplePlotName(id) {           // 根据id找样地名字
       getSamplePlotName(id).then(response => {
-        response['list'].forEach(samplePlantInfo => {
-          this.samplePlotName_temp = samplePlantInfo.samplePlotName
-        })
+        this.samplePlotName_temp = response['samplePlotName']
+        // console.log(response['samplePlotName'])
       })
     },
     checkImg() {      // 把id(样地的ID)传到后端获取缩略图，然后开一个新的网页展示缩略图
@@ -415,7 +415,7 @@ export default {
           this.imageBase64 = samplePlantInfo.imageBase64
         })
       })
-      console.log("前端接收到的：", this.imageBase64)
+      // console.log("前端接收到的：", this.imageBase64)
       const newWindow = window.open()
       if (newWindow) {
         // 在新窗口中写入HTML，显示Base64图片
@@ -450,6 +450,12 @@ export default {
       } else {
         alert('无法打开新窗口，请允许浏览器弹出窗口。');
       }
+    },
+
+    //查看样地地图
+    checkMap() {
+      // this.showIframe = true;
+      this.$router.push({path: '/device/map2D',samplePlotName: this.ymhName})
     },
     downLoadImg() {
       // 创建一个下载链接

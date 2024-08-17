@@ -3,14 +3,14 @@
 import Layout from '@/layout'    // 整体布局组件
 
 const deviceRouter = {
-  path: '/device',
+  path: '/device',    //文件夹的名字
   component: Layout,
-  redirect: '/device/complex-table',
+  redirect: '/device/complex-table',    //文件夹,不确定？？？？
   name: 'device',
   //hidden: true,    // 在侧边栏隐藏
   meta: {
     title: '成像设备管理',
-    icon: 'edit'
+    icon: 'disc'
   },
   children: [
     {

@@ -9,7 +9,7 @@ const homePageRouter = {
   name: 'homePage',
   meta: {
     title: '首页',
-    icon: 'component'
+    icon: 'language'
   },
   children: [
     {

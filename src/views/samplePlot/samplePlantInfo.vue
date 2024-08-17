@@ -3,7 +3,8 @@
     <el-row :gutter="20">
 
       <el-col>
-        <el-card class="box-card" :loading="imgLoading" style="height: 470px">
+<!--        <el-card class="box-card" :loading="imgLoading" style="height: 470px">-->
+        <el-card class="box-card" :loading="imgLoading" style="height: 600px">
           <div slot="header" class="clearfix">
             <span>数据概览</span>
 
@@ -14,7 +15,7 @@
           </div>
 
           <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row
-                    style="width: 100%;" height="350" @sort-change="sortChange">
+                    style="width: 100%;" height="360px" @sort-change="sortChange">
             <el-table-column label="植物编号" prop="id" align="center" min-width="5%" :class-name="getSortClass('id')">
               <template slot-scope="{row}">
                 <span>{{ row.id }}</span>
@@ -67,7 +68,12 @@
             </el-table-column>
 
           </el-table>
+          <div style="text-align: center;">
+            <pagination v-show="total > 0" :total="total" :page.sync="page" :limit.sync="pageLimit"
+                        @pagination="pageChange"/>
+          </div>
         </el-card>
+
       </el-col>
     </el-row>
 
@@ -82,38 +88,50 @@
       </el-card>
     </el-row>
     <el-dialog :title="'新建植物（请填写植物信息）'"
-               :visible.sync="dialogTableVisibleCreatePlant" width="20%" :append-to-body="true">
+               :visible.sync="dialogTableVisibleCreatePlant" width="25%" :append-to-body="true">
       <el-form :model="plantFormCreate" :rules="plantRulesCreate" ref="ruleFormCreate" label-width="100px"
                class="demo-ruleForm">
         <el-form-item label="植物名称" prop="samplePlantName">
+          <el-col :span="16">
           <el-input v-model="plantFormCreate.samplePlantName"></el-input>
+            </el-col>
         </el-form-item>
         <el-form-item label="经度" prop="longitude">
+          <el-col :span="16">
           <el-input v-model="plantFormCreate.longitude"></el-input>
+          </el-col>
         </el-form-item>
         <el-form-item label="纬度" prop="latitude">
+          <el-col :span="16">
           <el-input v-model="plantFormCreate.latitude"></el-input>
+          </el-col>
         </el-form-item>
         <el-form-item label="高度" prop="heigth">
+          <el-col :span="16">
           <el-input v-model="plantFormCreate.heigth"></el-input>
+          </el-col>
         </el-form-item>
-        <el-form-item label="最大冠幅" prop="max">
-          <el-input v-model="plantFormCreate.max"></el-input>
-        </el-form-item>
-        <el-form-item label="最小冠幅" prop="min">
-          <el-input v-model="plantFormCreate.min"></el-input>
-        </el-form-item>
-        <el-form-item label="地径" prop="min">
-          <el-input v-model="plantFormCreate.dimeter"></el-input>
-        </el-form-item>
-        <el-form-item label="冠部面积" prop="min">
-          <el-input v-model="plantFormCreate.crownArea"></el-input>
-        </el-form-item>
+<!--        <el-form-item label="最大冠幅" prop="max">-->
+<!--          <el-col :span="16">-->
+<!--          <el-input v-model="plantFormCreate.max"></el-input>-->
+<!--          </el-col>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="最小冠幅" prop="min">-->
+<!--          <el-input v-model="plantFormCreate.min"></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="地径" prop="min">-->
+<!--          <el-input v-model="plantFormCreate.dimeter"></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="冠部面积" prop="min">-->
+<!--          <el-input v-model="plantFormCreate.crownArea"></el-input>-->
+<!--        </el-form-item>-->
         <el-form-item label-width="100px" label="拍摄时间:">
+          <el-col :span="16">
           <el-date-picker v-model="plantFormCreate.time" type="date" format="yyyy 年 MM 月 dd 日"
                           value-format="yyyy-MM-dd"
                           placeholder="选择日期">
           </el-date-picker>
+          </el-col>
         </el-form-item>
 
         <el-form-item>
@@ -277,6 +295,7 @@ export default {
       imgLoading: true,
       readonly: true,
       id: '',
+      name: '',
     }
   },
   created() {
@@ -290,6 +309,7 @@ export default {
   methods: {
     getList() {
       this.id = this.$route.query.samplePlotId;
+      this.name = this.$route.query.samplePlotName;
       this.listLoading = true
       getSamplePlantList(this.id).then(response => {
         // console.log(this.id + "****")
@@ -309,10 +329,11 @@ export default {
           console.log("####")
           // console.log(response)
           this.dataList.push(data)
-          this.list = this.dataList.slice(0,this.dataList.length)
-          // this.list = this.dataList.slice(0, this.pageLimit)
+          // this.list = this.dataList.slice(0,this.dataList.length)
+          this.list = this.dataList.slice(0, this.pageLimit)
           //list为row方法的内置变量，通过分页将datalist的内容传给list，再传给临时变量row，用于表格中的数据展示
           this.total = this.dataList.length
+          // console.log(this.total + " total")
         })
       })
       this.listLoading = false
@@ -356,7 +377,7 @@ export default {
 
     //批量上传植物信息
     uploadBatch() {
-      this.$router.push({path: '/test/Test', query: {samplePlotId: this.id}})
+      this.$router.push({path: '/excelUpload/excelBatchUpload', query: {samplePlotId: this.id, samplePlotName: this.name}})
       // this.$router.push({path: '/test/Test'})
       //改为uploadBatchPlantInfo
     },
@@ -370,7 +391,7 @@ export default {
     },
     pageChange() {
       this.listLoading = true
-      this.list = this.dataList.slice((this.page - 1) * this.pageLimit, this.page * this.pageLimit + 1)
+      this.list = this.dataList.slice((this.page - 1) * this.pageLimit, this.page * this.pageLimit)
       setTimeout(() => {
         this.listLoading = false
       }, 0.2 * 1000)
@@ -389,20 +410,20 @@ export default {
       console.log(timeList[0] === beginYear || timeList[0] === endYear)
       console.log(timeFilter[0].getMonth())
       if (timeList[0] > beginYear && timeList[0] < endYear) {
-        console.log(11111)
+        // console.log(11111)
         return true
       } else if (timeList[0] === beginYear || timeList[0] === endYear) {
         if (timeList[1] > beginMonth && timeList[1] < endMonth) {
-          console.log(22222)
+          // console.log(22222)
           return true
         } else if (timeList[1] === beginMonth || timeList[1] === endMonth) {
           if (timeList[2] >= beginDate && timeList[2] <= endDate) {
-            console.log(33333)
+            // console.log(33333)
             return true
           }
         }
       } else {
-        console.log(44444)
+        // console.log(44444)
         return false
       }
     },

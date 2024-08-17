@@ -18,6 +18,14 @@
                 </el-select>
               </el-form-item>
 
+              <el-form-item label-width="100px" label="拍摄设备:">
+                <!-- <el-input v-model="sampleName" placeholder="请选择样地" style="width: 220px"></el-input> -->
+                <el-select v-model="UAV" placeholder="请选择样地" style="width: 220px">
+                  <el-option v-for="item in UAVList" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
+                <el-button @click="deviceInfo" type="success"  style="margin-left: 20px;">查看设备信息</el-button>
+              </el-form-item>
 
               <el-form-item label-width="100px" label="拍摄时间:">
                 <el-date-picker v-model="time" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"
@@ -93,6 +101,14 @@
                 </el-select>
               </el-form-item>
 
+              <el-form-item label-width="100px" label="拍摄设备:">
+                <!-- <el-input v-model="sampleName" placeholder="请选择样地" style="width: 220px"></el-input> -->
+                <el-select v-model="UAV" placeholder="请选择样地" style="width: 220px">
+                  <el-option v-for="item in UAVList" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
+                <el-button @click="deviceInfo" type="success"  style="margin-left: 20px;">查看设备信息</el-button>
+              </el-form-item>
 
               <el-form-item label-width="100px" label="拍摄时间:">
                 <el-date-picker v-model="time" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"
@@ -170,6 +186,7 @@
 <script>
 import {uploadStitchingImg, uploadUnstitchingImg, hergeImg} from '@/api/uploadStichingImage'
 import {getSamplePlotList} from "@/api/samplePlot";
+import {getUAVList} from "@/api/device"
 import SparkMD5 from 'spark-md5'
 
 export default {
@@ -183,6 +200,7 @@ export default {
       // },
       tifFiles: [],
       sampleName: '',
+      UAV: '',
       len: 0,
       time: '',
       sampleLength: '',
@@ -202,6 +220,7 @@ export default {
 
       sampleSelectAlgorithm: '',
       sampleNameList: [],
+      UAVList: [],
         sampleAltitudeList: [{
           value: '20',
           label: '20'
@@ -309,7 +328,18 @@ export default {
           this.sampleNameList.push(data)
         })
       })
-      console.log("###")
+      getUAVList().then(response => {
+        response['list'].forEach(UAVInfo => {
+          let tmp;
+          if(UAVInfo.UAVCamera === '集成相机') tmp = '1';
+          else tmp = '2';
+          let data = {
+            value: UAVInfo.UAVBrand + ' ' + UAVInfo.UAVType + ' ' + tmp,
+            label: UAVInfo.UAVBrand + '' + UAVInfo.UAVType + ' ' + UAVInfo.UAVCamera
+          }
+          this.UAVList.push(data)
+        })
+      })
     },
     async handleFileChange(file, fileList) {
       for(let index = 0;index < fileList.length;index++){
@@ -422,8 +452,10 @@ export default {
         // 这里应该包括上传进度的监听和处理
     },
     notifyServerToMerge(hash){
-
       return "成功"
+    },
+    deviceInfo(){
+      this.$router.push({path: '/device/device'})
     }
   }
 }

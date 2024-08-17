@@ -21,11 +21,6 @@
 <!--              @sort-change="sortChange">-->
     <el-table :key="tableKey" v-loading="listLoading" :data="filteredData" border fit highlight-current-row style="width: 100%;"
               @sort-change="sortChange">
-      <!--      <el-table-column label="样地编号" prop="id" align="center" min-width="3%" :class-name="getSortClass('id')">`-->
-      <!--        <template slot-scope="{row}">-->
-      <!--          <span>{{ row.id }}</span>-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
       <el-table-column label="样地名称" prop="id" align="center" min-width="5%" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
@@ -50,7 +45,7 @@
       <el-table-column label="植物种类" prop="id" align="center" min-width="10%" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span v-if="row.samplePlant && row.samplePlant.length > 0">
-            <template v-for="plant in row.samplePlant">
+            <template v-for="(plant,index) in row.samplePlant">
 <!--            <template v-for="(plant,index) in row.samplePlant">-->
               <span>{{ plant+' ' }}</span>
 <!--              <span v-if="index !== row.samplePlant.length - 1">,</span>-->
@@ -67,9 +62,18 @@
           <el-button size="mini" @click="updateSample(row)">
             修改
           </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button size="mini" type="danger" :disabled="btnDeleteDisable" @click="handleDelete(row,$index)">
             删除
           </el-button>
+
+<!--          <el-dialog title="确认删除" :visible.sync="dialogVisible_delete" width="30%" @close="handleClose">-->
+<!--            <p>你确定要删除这个项吗？</p>-->
+<!--            <span slot="footer" class="dialog-footer">-->
+<!--              <el-button @click="handleClose">取消</el-button>-->
+<!--              <el-button type="danger" @click="handleConfirmDelete">确定</el-button>-->
+<!--            </span>-->
+<!--          </el-dialog>-->
+
         </template>
       </el-table-column>
     </el-table>
@@ -80,12 +84,13 @@
     </div>
 
     <!--    <el-dialog :title="'修改第'+dataModify.samplePlotId+'个样地 : '+dataModify.samplePlotName+' 的信息'"-->
-    <el-dialog :title="'修改样地 '+dataModify.samplePlotName+' 的信息'"
-               :visible.sync="dialogTableVisibleModify" width="20%" :append-to-body="true">
+    <el-dialog :title="'修改样地 '+dataModify.samplePlotName+' 的信息'" :visible.sync="dialogTableVisibleModify" width="20%" :append-to-body="true">
       <el-form :model="ruleFormModify" :rules="rulesModify" ref="ruleFormModify" label-width="100px"
                class="demo-ruleForm">
         <el-form-item label="样地名称" prop="samplePlotName">
-          <el-input v-model="ruleFormModify.samplePlotName"></el-input>
+          <el-col :span="16">
+              <el-input v-model="ruleFormModify.samplePlotName"></el-input>
+          </el-col>
         </el-form-item>
 
         <el-form-item>
@@ -98,16 +103,22 @@
     <!--    <el-dialog :title="'新建第'+nextTotal+'个样地'"-->
     <el-dialog :title="'新建样地（请填写样地信息）'"
                :visible.sync="dialogTableVisibleCreate" width="20%" :append-to-body="true">
-      <el-form :model="ruleFormCreate" :rules="rulesCreate" ref="ruleFormCreate" label-width="100px"
+      <el-form :model="ruleFormCreate"  :rules="rulesCreate" ref="ruleFormCreate" label-width="100px"
                class="demo-ruleForm">
         <el-form-item label="样地名称" prop="samplePlotName">
-          <el-input v-model="ruleFormCreate.samplePlotName"></el-input>
+           <el-col :span="16">
+              <el-input v-model="ruleFormCreate.samplePlotName"></el-input>
+           </el-col>
         </el-form-item>
         <el-form-item label="经度" prop="longitude">
+          <el-col :span="16">
           <el-input v-model="ruleFormCreate.longitude"></el-input>
+            </el-col>
         </el-form-item>
         <el-form-item label="纬度" prop="latitude">
+          <el-col :span="16">
           <el-input v-model="ruleFormCreate.latitude"></el-input>
+            </el-col>
         </el-form-item>
 
         <el-form-item>
@@ -127,6 +138,7 @@ import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import Vue from 'vue';
 import {CreateSample, deleteSamplePlot, getSamplePlotList, updateSample} from "@/api/samplePlot";
+import {uploadPlantBatch} from "@/api/plant";
 
 const calendarTypeOptions = [
   {key: 'CN', display_name: 'China'},
@@ -215,6 +227,12 @@ export default {
   },
   data() {
     return {
+      /************* 删除样地 *****************/
+      btnDeleteDisable: false,    //删除弹窗是否生效
+        dialogVisible_delete: false,    // 确认删除的弹框是否展示
+        deleteIndex: null,
+        deleteRow: null,               // 确认删除时的临时变量
+      /***************************************/
       //dataList表示后端数据接受的变量，然后赋值给list在表格中进行展示
       dataList: [],
       row: {},         // 鼠标停留的那一行存到row中
@@ -374,6 +392,9 @@ export default {
             longitude: this.ruleFormCreate.longitude,
             latitude: this.ruleFormCreate.latitude
           }
+          this.ruleFormCreate.samplePlotName = '';
+          this.ruleFormCreate.longitude = '';
+          this.ruleFormCreate.latitude = '';
           CreateSample(request).then(res => {
             this.$message({
               type: 'success',
@@ -420,12 +441,12 @@ export default {
       this.listLoading = false
     },
     checkDetail(row) {
-      this.$router.push({path: '/samplePlot/samplePlantInfo', query: {samplePlotId: row.id}})
+      this.$router.push({path: '/samplePlot/samplePlantInfo', query: {samplePlotId: row.id, samplePlotName: row.name}})
       //通过￥router将此页面的信息传递给植物页面，在植物页面中通过this.id = this.$route.query.samplePlotId获取数据
     },
     pageChange() {
       this.listLoading = true
-      this.list = this.dataList.slice((this.page - 1) * this.pageLimit + 1, this.page * this.pageLimit)
+      this.list = this.dataList.slice((this.page - 1) * this.pageLimit, this.page * this.pageLimit)
       setTimeout(() => {
         this.listLoading = false
       }, 0.2 * 1000)//等待0.2秒
@@ -581,19 +602,33 @@ export default {
         }
       })
     },
+    /************* 删除样地的确认弹窗 *************/
     handleDelete(row, index) {
-      console.log("###")
-      console.log(row.id)
-      deleteSamplePlot(row.id).then(res => {
-        console.log("删除成功");
+      this.dialogVisible_delete = true;
+      this.btnDeleteDisable = true;
+      // console.log(row.id)
+      this.$confirm('是否确定删除数据？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteSamplePlot(row.id).then(response => {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+        })
+        //notify消息提示
+        // this.$notify({
+        //   title: 'Success',
+        //   message: 'Delete Successfully',
+        //   type: 'success',
+        //   duration: 1000
+        // })
+        this.list.splice(index, 1)
       })
-      this.$notify({
-        title: 'Success',
-        message: 'Delete Successfully',
-        type: 'success',
-        duration: 1000
-      })
-      this.list.splice(index, 1)
+      this.dialogVisible_delete = false;
+      this.btnDeleteDisable = false;
     },
     handleFetchPv(pv) {
       fetchPv(pv).then(response => {

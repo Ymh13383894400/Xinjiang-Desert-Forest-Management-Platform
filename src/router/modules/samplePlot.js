@@ -10,7 +10,7 @@ const samplePlotRouter = {
   //hidden: true,    // 在侧边栏隐藏
   meta: {
     title: '样地植物信息',
-    icon: 'tree'
+    icon: 'table-horizontal'
   },
   children: [
     {
