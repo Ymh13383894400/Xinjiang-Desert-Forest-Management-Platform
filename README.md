@@ -1,243 +1,99 @@
-<p align="center">
-  <img width="320" src="https://wpimg.wallstcn.com/ecc53a42-d79b-42e2-8852-5126b810a4c8.svg">
-</p>
+## 荒漠林项目指导文档
 
-<p align="center">
-  <a href="https://github.com/vuejs/vue">
-    <img src="https://img.shields.io/badge/vue-2.6.10-brightgreen.svg" alt="vue">
-  </a>
-  <a href="https://github.com/ElemeFE/element">
-    <img src="https://img.shields.io/badge/element--ui-2.7.0-brightgreen.svg" alt="element-ui">
-  </a>
-  <a href="https://travis-ci.org/PanJiaChen/vue-element-admin" rel="nofollow">
-    <img src="https://travis-ci.org/PanJiaChen/vue-element-admin.svg?branch=master" alt="Build Status">
-  </a>
-  <a href="https://github.com/PanJiaChen/vue-element-admin/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/mashape/apistatus.svg" alt="license">
-  </a>
-  <a href="https://github.com/PanJiaChen/vue-element-admin/releases">
-    <img src="https://img.shields.io/github/release/PanJiaChen/vue-element-admin.svg" alt="GitHub release">
-  </a>
-  <a href="https://gitter.im/vue-element-admin/discuss">
-    <img src="https://badges.gitter.im/Join%20Chat.svg" alt="gitter">
-  </a>
-  <a href="https://panjiachen.github.io/vue-element-admin-site/donate">
-    <img src="https://img.shields.io/badge/%24-donate-ff69b4.svg" alt="donate">
-  </a>
-</p>
+### Background
 
-English | [简体中文](./README.zh-CN.md) | [日本語](./README.ja.md) | [Spanish](./README.es.md)
+新疆土地荒漠化一直是我国林业研究者多年来研究的重点问题，土地荒漠化将会使新疆的土地生产力下降，导致农业产量减少，使得粮食安全受到威胁；同时，土地荒漠化还会使得新疆的水资源减少，并且逐渐恶化，甚至新疆会面临水资源枯竭的危机，严重的影响到当地居民的用水和生态系统；将会使生物多样性丧失，导致植物和动物栖息地大量减少，影响到当地的生态多样性；还会加剧影像沙尘暴频率，影响空气质量和人们健康，降低了新疆生态的宜居性，影响当地的经济发展和社会稳定。总的来说，荒漠化带来的一系列负面效应对环境、经济和社会都构成了极大的挑战 。
 
-<p align="center">
-  <b>SPONSORED BY</b>
-</p>
-<table align="center" cellspacing="0" cellpadding="0">
-  <tbody>
-    <tr>
-      <td align="center" valign="middle">
-       <a href="https://www.vform666.com/" title="variantForm" target="_blank" style="padding-right: 20px;">
-        <img height="200px" style="padding-right: 20px;" src="https://s3.bmp.ovh/imgs/2022/04/11/3379c1c1cf2e3228.png" title="variantForm">
-        </a>
-      </td>
-    </tr>
-  </tbody>
-</table>
+因此，治理新疆土地荒漠化具有深远的意义。首先，绿水青山，就是金山银山，响应总书记的号召政策。治理土地荒漠化将有助于恢复生态平衡，保护土壤和水资源，从而支持农业生产和维持生物多样性。其次，减少荒漠化可以提升当地居民的生活质量，改善环境条件，并促进经济发展，从而在大局观上有助于我国的经济发展。最后，控制荒漠化对区域气候稳定有积极作用，减缓气候变化带来的负面影响。这样不断的良性循环，不仅有助于当地的可持续发展，也对全球生态系统健康具有积极影响。所以，治理土地荒漠化的研究是我国的政策指引，更是战略要点。该项目是基于治理土地荒漠化背景下的新疆土地荒漠化数据的维护和处理网页平台，使得用户可以高效的存储、维护以及观测荒漠化样地数据，从而提高相关科研人员的研究效率。
 
-## Introduction
+### Motivation and Goals
 
-[vue-element-admin](https://panjiachen.github.io/vue-element-admin) is a production-ready front-end solution for admin interfaces. It is based on [vue](https://github.com/vuejs/vue) and uses the UI Toolkit [element-ui](https://github.com/ElemeFE/element).
+- 开发一套管理和维护新疆荒漠林样地数据的Web界面。
+- 构建了用于高效存储和维护新疆荒漠林样地图文数据的数据库。
+- 开发了一套基于无人机拍摄图像拼接的算法软件。
+- 开发了用于识别荒漠林样地植物数据的高精度遥感检测算法。
 
-[vue-element-admin](https://panjiachen.github.io/vue-element-admin) is based on the newest development stack of vue and it has a built-in i18n solution, typical templates for enterprise applications, and lots of awesome features. It helps you build large and complex Single-Page Applications. I believe whatever your needs are, this project will help you.
+### Proposal
 
-- [Preview](https://panjiachen.github.io/vue-element-admin)
+为构建新疆荒漠林样地数据的展示、存储以及处理，我们采用基于Vue前端框架和两种后端框架（Django开发增删改查等基本功能·，springboot开发大文件切片上传实现高效传输文件）开发了户用易于使用、高效的操作界面。其中，对于前端页面，我们构建了四个大板块，分别是：样地地图展示模块，用于可视化直观的展示样地地理位置和UAV实拍拼接后的真实影像以及样地植物标注信息的页面；数据管理模块包括UAV以及成像设备管理页面、遥感图像数据管理页面、遥感植物信息可视化展示和管理页面；数据处理模块包括无人机遥感图像拼接、样地遥感图像校正处理、样地遥感图像检测识别；飞播模块用于实时展示无人机拍摄数据时的飞行直播。
 
-- [Documentation](https://panjiachen.github.io/vue-element-admin-site/)
+- 新疆土地荒漠化平台详细功能模块
+  - 首页
+  - 设备
+  - 样地
+  - 拼接
+  - 识别
 
-- [Gitter](https://gitter.im/vue-element-admin/discuss)
+- 无人机遥感地图制作展示
 
-- [Donate](https://panjiachen.github.io/vue-element-admin-site/donate/)
+  - 基于首页的地图选择样地名称展示样地详细信息
 
-- [Wiki](https://github.com/PanJiaChen/vue-element-admin/wiki)
+    <img src=".\images\首页.png" alt="首页"  />
 
-- [Gitee](https://panjiachen.gitee.io/vue-element-admin/) 国内用户可访问该地址在线预览
+    
 
-- Base template recommends using: [vue-admin-template](https://github.com/PanJiaChen/vue-admin-template)
-- Desktop: [electron-vue-admin](https://github.com/PanJiaChen/electron-vue-admin)
-- Typescript: [vue-typescript-admin-template](https://github.com/Armour/vue-typescript-admin-template) (Credits: [@Armour](https://github.com/Armour))
-- [awesome-project](https://github.com/PanJiaChen/vue-element-admin/issues/2312)
+  - 以选择玛纳斯02为例，展示样地的植物详细信息
 
-**After the `v4.1.0+` version, the default master branch will not support i18n. Please use [i18n Branch](https://github.com/PanJiaChen/vue-element-admin/tree/i18n), it will keep up with the master update**
+    <img src=".\images\地图样地信息.png" alt="首页"  />
 
-**The current version is `v4.0+` build on `vue-cli`. If you find a problem, please put [issue](https://github.com/PanJiaChen/vue-element-admin/issues/new). If you want to use the old version , you can switch branch to [tag/3.11.0](https://github.com/PanJiaChen/vue-element-admin/tree/tag/3.11.0), it does not rely on `vue-cli`**
+    
 
-**This project does not support low version browsers (e.g. IE). Please add polyfill by yourself.**
+  - 查看玛纳斯02样地的无人机遥感图像，展示了真实的拍摄数据以及样地植物的标注信息
+  
+    <img src=".\images\玛纳斯02地图展示.png" alt="首页"  />
 
-## Preparation
-
-You need to install [node](https://nodejs.org/) and [git](https://git-scm.com/) locally. The project is based on [ES2015+](https://es6.ruanyifeng.com/), [vue](https://cn.vuejs.org/index.html), [vuex](https://vuex.vuejs.org/zh-cn/), [vue-router](https://router.vuejs.org/zh-cn/), [vue-cli](https://github.com/vuejs/vue-cli) , [axios](https://github.com/axios/axios) and [element-ui](https://github.com/ElemeFE/element), all request data is simulated using [Mock.js](https://github.com/nuysoft/Mock).
-Understanding and learning this knowledge in advance will greatly help the use of this project.
-
-[![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/PanJiaChen/vue-element-admin/tree/CodeSandbox)
-
-<p align="center">
-  <img width="900" src="https://wpimg.wallstcn.com/a5894c1b-f6af-456e-82df-1151da0839bf.png">
-</p>
-
-## Sponsors
-
-Become a sponsor and get your logo on our README on GitHub with a link to your site. [[Become a sponsor]](https://www.patreon.com/panjiachen)
-
-### Akveo
-<a href="https://store.akveo.com/products/vue-java-admin-dashboard-spring?utm_campaign=akveo_store-Vue-Vue_demo%2Fgithub&utm_source=vue_admin&utm_medium=referral&utm_content=github_banner"><img width="500px" src="https://raw.githubusercontent.com/PanJiaChen/vue-element-admin-site/master/docs/.vuepress/public/images/vue-java-banner.png" /></a><p>Get Java backend for Vue admin with 20% discount for 39$ use coupon code SWB0RAZPZR1M
-</p>
-
-### Flatlogic
-
-<a href="https://flatlogic.com/admin-dashboards?from=vue-element-admin"><img width="150px" src="https://wpimg.wallstcn.com/9c0b719b-5551-4c1e-b776-63994632d94a.png" /></a><p>Admin Dashboard Templates made with Vue, React and Angular.</p>
-
-## Features
+### 代码主要结构
 
 ```
-- Login / Logout
+xinjiang_desert_forest
+├─ djangoProject		//django网页后端代码
+│  │─ api				//主要写的对接前端的api
+│  │─ data				//一些存储的处理的临时文件
+│  │─ djangoProject		//后端django的一些配置文件和生成项目自带的一些其他文件
+│  │─ image				//后端存储前端上传的tif文件的存储位置
+│  │─ templates			//。。
+│  │─ venv				//后端环境
+│  │─ manage.py			//项目启动命令的文件（runserver + port等等）
+│  │─
+│  └─ .sql文件			//数据库文件，存储一些已经到导入的文件
+│  
+│─ git			//用于文件上传到github或gitee
+│  
+│─ vue-element-admin	//vue前端框架
+│  │─ build
+│  │─ mock
+│  │─ node_modules		//下载的模块
+│  │─ public			//静态文件
+│  │─ src				//前端的代码
+│  │  │─ api			//前端的接口api
+│  │  │─ assets			//静态文件
+│  │  │─ components		//全局调用的子组件
+│  │  │─ directive		//
+│  │  │─ icons			//图标
+│  │  │─ layout			
+│  │  │─ router			//路由
+│  │  │─ styles
+│  │  │─ utils
+│  │  │  │─。。。。
+│  │  │  └─request.js	//前端访问的地址和端口号
+│  │  │─ views			//各个组件
+│  │  │─ App.vue		//配置文件
+│  │  └─。。。
+│  │
+│  │─ tests				//测试文件
+│  │─ package.json		//模块包的配置
+│  │─ vite.config.js	//项目配置
+│  │─ vue.config.js		//项目配置
+│  └─
+│
+│─ big-file-upload-master	//大文件上传模块的springboot的后端代码
+│  
+│─ 测试文件				//项目的测试文件
+│
+└─utils
 
-- Permission Authentication
-  - Page permission
-  - Directive permission
-  - Permission configuration page
-  - Two-step login
 
-- Multi-environment build
-  - Develop (dev)
-  - sit
-  - Stage Test (stage)
-  - Production (prod)
-
-- Global Features
-  - I18n
-  - Multiple dynamic themes
-  - Dynamic sidebar (supports multi-level routing)
-  - Dynamic breadcrumb
-  - Tags-view (Tab page Support right-click operation)
-  - Svg Sprite
-  - Mock data
-  - Screenfull
-  - Responsive Sidebar
-
-- Editor
-  - Rich Text Editor
-  - Markdown Editor
-  - JSON Editor
-
-- Excel
-  - Export Excel
-  - Upload Excel
-  - Visualization Excel
-  - Export zip
-
-- Table
-  - Dynamic Table
-  - Drag And Drop Table
-  - Inline Edit Table
-
-- Error Page
-  - 401
-  - 404
-
-- Components
-  - Avatar Upload
-  - Back To Top
-  - Drag Dialog
-  - Drag Select
-  - Drag Kanban
-  - Drag List
-  - SplitPane
-  - Dropzone
-  - Sticky
-  - CountTo
-
-- Advanced Example
-- Error Log
-- Dashboard
-- Guide Page
-- ECharts
-- Clipboard
-- Markdown to html
 ```
 
-## Getting started
 
-```bash
-# clone the project
-git clone https://github.com/PanJiaChen/vue-element-admin.git
 
-# enter the project directory
-cd vue-element-admin
-
-# install dependency
-npm install
-
-# develop
-npm run dev
-```
-
-This will automatically open http://localhost:9527
-
-## Build
-
-```bash
-# build for test environment
-npm run build:stage
-
-# build for production environment
-npm run build:prod
-```
-
-## Advanced
-
-```bash
-# preview the release environment effect
-npm run preview
-
-# preview the release environment effect + static resource analysis
-npm run preview -- --report
-
-# code format check
-npm run lint
-
-# code format check and auto fix
-npm run lint -- --fix
-```
-
-Refer to [Documentation](https://panjiachen.github.io/vue-element-admin-site/guide/essentials/deploy.html) for more information
-
-## Changelog
-
-Detailed changes for each release are documented in the [release notes](https://github.com/PanJiaChen/vue-element-admin/releases).
-
-## Online Demo
-
-[Preview](https://panjiachen.github.io/vue-element-admin)
-
-## Donate
-
-If you find this project useful, you can buy author a glass of juice :tropical_drink:
-
-![donate](https://wpimg.wallstcn.com/bd273f0d-83a0-4ef2-92e1-9ac8ed3746b9.png)
-
-[Paypal Me](https://www.paypal.me/panfree23)
-
-[Buy me a coffee](https://www.buymeacoffee.com/Pan)
-
-## Browsers support
-
-Modern browsers and Internet Explorer 10+.
-
-| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />](https://godban.github.io/browsers-support-badges/)</br>IE / Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](https://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](https://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](https://godban.github.io/browsers-support-badges/)</br>Safari |
-| --------- | --------- | --------- | --------- |
-| IE10, IE11, Edge | last 2 versions | last 2 versions | last 2 versions |
-
-## License
-
-[MIT](https://github.com/PanJiaChen/vue-element-admin/blob/master/LICENSE)
-
-Copyright (c) 2017-present PanJiaChen
